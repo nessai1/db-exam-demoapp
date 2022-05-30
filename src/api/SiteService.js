@@ -27,6 +27,10 @@ export default class SiteService {
         }
     }
 
+    async setSite(siteData) {
+
+    }
+
 }
 
 function getTestEditor() {

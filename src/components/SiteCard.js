@@ -13,7 +13,20 @@ export default function SiteCard(props) {
             changeState({editMode: false});
         }
         else {
-            console.log('FORM SUBMITED', event);
+            const formData = new FormData(event.target);
+            const requestData = {
+                id: data.id,
+                title: formData.get('title'),
+                desc: formData.get('desc'),
+                danger: formData.get('danger') === 'on',
+                language: formData.get('language'),
+                encode: formData.get('encode')
+            };
+
+            if (requestData.title && requestData.language && requestData.encode)
+            {
+                console.log('process send data');
+            }
         }
 
         event.preventDefault();
@@ -94,7 +107,7 @@ export default function SiteCard(props) {
                                 className="form-check-input"
                                 type="checkbox"
                                 defaultChecked={data.danger || false}
-                                id="flexCheckDefault"
+                                name="danger"
                             />
                                 <label className="form-check-label" htmlFor="flexCheckDefault">
                                     Сайт содержит баннеры
@@ -105,7 +118,7 @@ export default function SiteCard(props) {
                             <textarea className="form-control" name="desc" rows="3" defaultValue={data.desc}></textarea>
                         </div>
                         <div className="d-flex flex-row">
-                            <select className="form-select form-select-sm w-25" aria-label=".form-select-sm example">
+                            <select name="language" className="form-select form-select-sm w-25" aria-label=".form-select-sm example">
                                 {
 
                                     state.editorData.lang.map(lang => (
@@ -113,7 +126,7 @@ export default function SiteCard(props) {
                                     ))
                                 }
                             </select>
-                            <select style={{marginLeft: '20px'}} className="form-select form-select-sm w-25" aria-label=".form-select-sm example">
+                            <select name="encode" style={{marginLeft: '20px'}} className="form-select form-select-sm w-25" aria-label=".form-select-sm example">
                                 {
 
                                     state.editorData.encode.map(encode => (
