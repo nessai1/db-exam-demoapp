@@ -14,6 +14,11 @@ class PostsRouter {
                 break;
             case 'getEditorData':
                 echo json_encode(PostsProvider::getEditorData());
+                break;
+            case 'deletePost':
+                $data = json_decode(file_get_contents('php://input'), true);
+                echo json_encode(PostsProvider::deletePost($data));
+                break;
         }
         die();
     }

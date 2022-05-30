@@ -141,4 +141,43 @@ class PostsProvider {
 
         return $data;
     }
+
+    public static function deletePost(array $postData): array {
+        $siteId = (int)$postData['siteId'];
+
+        if (!($siteId > 0)) {
+            return [
+                'status' => 'INVALID_POST_DATA',
+                'data' => [
+                    'error_description' => 'site id must be natural number',
+                ],
+            ];
+        }
+
+        $db = Database::getInstance();
+        $site = $db->query("SELECT * FROM site WHERE ID = {$siteId}")->fetch_all();
+        if (count($site) !== 1) {
+            return [
+                'status' => 'SQL_ERROR',
+                'data' => [
+                    'error_description' => 'undefined site id',
+                ],
+            ];
+        }
+
+        $rs = $db->query("DELETE FROM site WHERE ID = {$siteId}");
+        if ($rs) {
+            return [
+                'status' => 'OK'
+            ];
+        }
+        else {
+            return [
+                'status' => 'SQL_ERROR',
+                'data' => [
+                    'error_description' => 'undefined sql error',
+                ],
+            ];
+        }
+    }
 }

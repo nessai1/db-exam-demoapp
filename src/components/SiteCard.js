@@ -78,6 +78,22 @@ export default function SiteCard(props) {
         });
     }
 
+    const deleteHandler = () => {
+        const siteService = new SiteService();
+        if (data.id > 0)
+        {
+            siteService.deleteSite(data.id).then((data) => {
+                if (data.status === 'OK') {
+                    window.location.reload();
+                }
+            });
+        }
+        else
+        {
+            window.location.reload();
+        }
+    }
+
 
     let haveBanner = '';
     if (!data.danger) {
@@ -121,6 +137,7 @@ export default function SiteCard(props) {
         return(
             <div className='card p-lg-2 m-lg-3'>
                 <div className='card-body'>
+                    <button type="button" className="btn-close mb-3" aria-label="Close" onClick={deleteHandler}></button>
                     <form onSubmit={submitHandler}>
                         <label htmlFor="title" className="fw-bold">Адрес сайта</label>
                         <input

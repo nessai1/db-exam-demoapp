@@ -43,6 +43,19 @@ export default class SiteService {
         return await response.json();
     }
 
+    async deleteSite(siteId) {
+        const response = await fetch(this.apiUrl + '/posts.php?operation=deletePost', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify({siteId: siteId})
+        });
+
+        return await response.json();
+    }
+
 }
 
 function getTestEditor() {
