@@ -33,11 +33,10 @@ class Database {
             $this->dbInfo['database']
         );
 
-        $this->someVal = 12;
     }
 
     public function query(string $queryText) {
-        $this->dbInstance->query($queryText);
+        return $this->dbInstance->query($queryText);
     }
 
     public function getSomeVal() {

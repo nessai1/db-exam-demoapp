@@ -1,11 +1,11 @@
 export default class SiteService {
     apiUrl = '';
-    constructor(apiUrl = '') {
+    constructor(apiUrl = '/api') {
         this.apiUrl = apiUrl;
     }
 
     async getPosts() {
-        if (this.apiUrl = 'test')
+        if (this.apiUrl === 'test')
         {
             return await (new Promise((resolve) => {
                 const data = getTestData();
@@ -13,7 +13,7 @@ export default class SiteService {
             }));
         }
 
-        const response = await fetch('/posts.php?operation=getPosts');
+        const response = await fetch(this.apiUrl + '/posts.php?operation=getPosts');
         return await response.json();
     }
 }
