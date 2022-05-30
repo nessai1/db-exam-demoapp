@@ -6,10 +6,14 @@ export default function SiteCard(props) {
     const data = props.siteData;
     const uId = `site-card-${props.siteData.id}`;
 
-    const [state, changeState] = useState({editMode: data.editMode || false, editorData: null});
+    const [state, changeState] = useState({editMode: data.editMode || false, editorData: null, loadEditor: data.loadEditor || false});
 
     const submitHandler = (event) => {
         if (event.nativeEvent.submitter.name === 'cancel') {
+            if (data.id === 0)
+            {
+                window.location.reload();
+            }
             changeState({editMode: false});
         }
         else {
@@ -44,15 +48,31 @@ export default function SiteCard(props) {
 
     useEffect(() => {
         if (data.editMode) {
+            state.editorData.lang = [];
+            state.editorData.encode = [];
             editModeEnable();
         }
-    }, []);
+    });
 
     const editModeEnable = () => {
         const siteService = new SiteService();
         siteService.getEditorData().then((data) => {
             changeState({
                 editMode: true,
+                editorData: data
+            });
+        });
+    }
+
+    if (state.loadEditor) {
+        state.editorData = {};
+        state.editorData.lang = [];
+        state.editorData.encode = [];
+        const siteService = new SiteService();
+        siteService.getEditorData().then((data) => {
+            changeState({
+                editMode: true,
+                loadEditor: false,
                 editorData: data
             });
         });
@@ -127,19 +147,28 @@ export default function SiteCard(props) {
                         </div>
                         <div className="d-flex flex-row">
                             <select name="language" className="form-select form-select-sm w-25" aria-label=".form-select-sm example">
-                                {
 
+                                { data.language !== null ? (
                                     state.editorData.lang.map(lang => (
                                         <option selected={lang[1] === data.language} value={lang[0]}>{lang[1]}</option>
                                     ))
-                                }
+                                ) : (
+                                    state.editorData.lang.map((lang,index) => (
+                                        <option selected={index === 0} value={lang[0]}>{lang[1]}</option>
+                                    ))
+                                )}
                             </select>
                             <select name="encode" style={{marginLeft: '20px'}} className="form-select form-select-sm w-25" aria-label=".form-select-sm example">
-                                {
+
+                                { data.language !== null ? (
                                     state.editorData.encode.map(encode => (
                                         <option selected={encode[1] === data.encode} value={encode[0]}>{encode[1]}</option>
                                     ))
-                                }
+                                ) : (
+                                    state.editorData.encode.map((encode, index) => (
+                                        <option selected={index === 0} value={encode[0]}>{encode[1]}</option>
+                                    ))
+                                )}
                             </select>
                         </div>
 
