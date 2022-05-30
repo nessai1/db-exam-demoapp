@@ -16,6 +16,24 @@ export default class SiteService {
         const response = await fetch(this.apiUrl + '/posts.php?operation=getPosts');
         return await response.json();
     }
+
+    async getEditorData() {
+        if (this.apiUrl === 'test')
+        {
+            return await (new Promise((resolve) => {
+                const data = getTestEditor();
+                resolve(data);
+            }));
+        }
+    }
+
+}
+
+function getTestEditor() {
+    return {
+        lang: [[1, 'Русский'], [2, 'English']],
+        encode: [[1, 'utf-8'], [2, 'windows-1251']]
+    };
 }
 
 function getTestData() {
@@ -41,7 +59,7 @@ function getTestData() {
             title: 'Some good site',
             desc: 'some big desc',
             encode: 'utf-8',
-            language: 'Русский',
+            language: 'English',
             created: '03-02-2001',
             updated: '05-12-2021',
             danger: false,
