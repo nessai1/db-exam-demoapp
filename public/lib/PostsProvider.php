@@ -4,7 +4,7 @@ require_once 'Database.php';
 
 class PostsProvider {
 
-    protected static function preparePost(array $post) {
+    protected static function preparePost(array $post): array {
         return [
             'id' => (int) $post['ID'],
             'title' => $post['ADDRESS'],
@@ -18,7 +18,7 @@ class PostsProvider {
         ];
     }
 
-    public static function getPosts() {
+    public static function getPosts(): array {
 
         $db = Database::getInstance();
 
@@ -45,5 +45,100 @@ class PostsProvider {
         }
 
         return $sites;
+    }
+
+
+    protected static function formPost(array $postData) {
+        $db = Database::getInstance();
+        $formedPost = [];
+
+        if (isset($postData['id']))
+        {
+            $formedPost['ID'] = (int)$postData['id'];
+        }
+        else
+        {
+            $formedPost['ID'] = 0;
+        }
+
+        $formedPost['ADDRESS'] = $db->prepare($postData['title']);
+        $formedPost['DESCRIPTION'] = $db->prepare($postData['desc']);
+        $formedPost['HAVE_BANNER'] = (int)$postData['danger'];
+        $formedPost['LANGUAGE'] = (int)$postData['language'];
+        $formedPost['ENCODE'] = (int)$postData['encode'];
+
+        return $formedPost;
+    }
+
+    public static function setPost(array $postData): array {
+
+        $formedPost = self::formPost($postData);
+
+        $db = Database::getInstance();
+        $langs = $db->query("SELECT * FROM language WHERE ID = {$formedPost['LANGUAGE']}")->fetch_all();
+        $encodes = $db->query("SELECT * FROM encode WHERE ID = {$formedPost['ENCODE']}")->fetch_all();
+
+        if (!(count($langs) >= 1) || !(count($encodes) >= 1) ) {
+            return [
+                'status' => 'SQL_ERROR',
+                'data' => [
+                    'error_description' => 'Undefined language or encode'
+                ]
+            ];
+        }
+
+        if ($formedPost['ID'] === 0) {
+            $query = "
+            INSERT INTO site (ADDRESS, DESCRIPTION, DATE_CREATE, DATE_UPDATE, LANGUAGE_ID, ENCODE_ID, HAVE_BANNER)
+            VALUES ('{$formedPost['ADDRESS']}', '{$formedPost['DESCRIPTION']}', NOW(), NOW(), {$formedPost['LANGUAGE']}, {$formedPost['ENCODE']}, {$formedPost['HAVE_BANNER']})
+            ";
+        }
+        else {
+            $site = $db->query("SELECT * FROM site WHERE ID = {$formedPost['ID']}")->fetch_all();
+            if (count($site) !== 1) {
+                return [
+                    'status' => 'SQL_ERROR',
+                    'data' => [
+                        'error_description' => 'Undefined site id'
+                    ]
+                ];
+            }
+
+            $query = "
+                UPDATE site
+                SET DATE_UPDATE = NOW(), ADDRESS = '{$formedPost['ADDRESS']}', DESCRIPTION = '{$formedPost['DESCRIPTION']}',
+                    LANGUAGE_ID = {$formedPost['LANGUAGE']}, ENCODE_ID = {$formedPost['ENCODE']}, HAVE_BANNER = {$formedPost['HAVE_BANNER']}
+                WHERE ID = {$formedPost['ID']}
+            ";
+        }
+
+        $rs = $db->query($query);
+        if ($rs) {
+            return [
+                'status' => 'OK'
+            ];
+        }
+        else {
+            return [
+                'status' => 'SQL_ERROR',
+                'data' => [
+                    'error_description' => 'undefined sql error',
+                ],
+            ];
+        }
+    }
+
+    public static function getEditorData(): array {
+        $db = Database::getInstance();
+
+        $langs = $db->query("SELECT * FROM language")->fetch_all();
+        $encodes = $db->query("SELECT * FROM encode")->fetch_all();
+
+        $data = [
+            'lang' => $langs,
+            'encode' => $encodes,
+        ];
+
+        return $data;
     }
 }

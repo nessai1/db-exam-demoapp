@@ -25,10 +25,22 @@ export default class SiteService {
                 resolve(data);
             }));
         }
+
+        const response = await fetch(this.apiUrl + '/posts.php?operation=getEditorData');
+        return await response.json();
     }
 
     async setSite(siteData) {
+        const response = await fetch(this.apiUrl + '/posts.php?operation=setPost', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(siteData)
+        });
 
+        return await response.json();
     }
 
 }

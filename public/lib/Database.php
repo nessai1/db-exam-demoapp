@@ -39,6 +39,10 @@ class Database {
         return $this->dbInstance->query($queryText);
     }
 
+    public function prepare($val) {
+        return $this->dbInstance->real_escape_string($val);
+    }
+
     public function getSomeVal() {
         return $this->someVal;
     }

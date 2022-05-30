@@ -25,7 +25,17 @@ export default function SiteCard(props) {
 
             if (requestData.title && requestData.language && requestData.encode)
             {
-                console.log('process send data');
+                const siteService = new SiteService();
+                siteService.setSite(requestData).then((result) => {
+                    if (result.status === 'OK')
+                    {
+                        window.location.reload();
+                    }
+                    else
+                    {
+                        console.log(result);
+                    }
+                });
             }
         }
 
@@ -39,10 +49,8 @@ export default function SiteCard(props) {
     }, []);
 
     const editModeEnable = () => {
-        console.log('editor');
-        const siteService = new SiteService('test');
+        const siteService = new SiteService();
         siteService.getEditorData().then((data) => {
-            console.log(data);
             changeState({
                 editMode: true,
                 editorData: data
@@ -128,15 +136,10 @@ export default function SiteCard(props) {
                             </select>
                             <select name="encode" style={{marginLeft: '20px'}} className="form-select form-select-sm w-25" aria-label=".form-select-sm example">
                                 {
-
                                     state.editorData.encode.map(encode => (
                                         <option selected={encode[1] === data.encode} value={encode[0]}>{encode[1]}</option>
                                     ))
                                 }
-                                <option value='selected'>Кодировка</option>
-                                <option value="1">windows-1251</option>
-                                <option value="2">utf-8</option>
-                                <option value="3">Three</option>
                             </select>
                         </div>
 

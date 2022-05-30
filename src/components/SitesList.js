@@ -6,7 +6,7 @@ export default function SitesList() {
     const [state, changeState] = useState([]);
 
     useEffect(() => {
-        const siteService = new SiteService('test');
+        const siteService = new SiteService();
         siteService.getPosts().then((data) => {
             changeState(data);
         });
